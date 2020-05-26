@@ -16,11 +16,16 @@ async def main():
             target_workspace = workspace
         if workspace.output == focused_output.name:
             prev_workspace = workspace
-    
-    #Move target workspace to focused output
-    await i3.command('workspace ' + str(target_workspace.num) + '; move workspace to output ' + focused_output.name + '; workspace ' + str(target_workspace.num))
-    #move previous workspace to target workspace's output
-    await i3.command ('workspace ' + str(prev_workspace.num) + '; move workspace to output ' + target_workspace.output + '; workspace ' + str(prev_workspace.num))
-    #focus target workspace at the new output
-    await i3.command ('workspace ' + str(target_workspace.num))
+ 
+    # if the target workspace doesn't exist, create it
+    if type(target_workspace) == None:
+        await i3.command('workspace ' + argv[1])
+    else:
+        # Move target workspace to focused output
+        await i3.command('workspace ' + str(target_workspace.num) + '; move workspace to output ' + focused_output.name + '; workspace ' + str(target_workspace.num))
+    # move previous workspace to target workspace's output
+        await i3.command ('workspace ' + str(prev_workspace.num) + '; move workspace to output ' + target_workspace.output + '; workspace ' + str(prev_workspace.num))
+    # focus target workspace at the new output
+        await i3.command ('workspace ' + str(target_workspace.num))
+
 asyncio.run(main())
