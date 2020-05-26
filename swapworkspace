@@ -1,0 +1,26 @@
+#!/usr/bin/env python
+import asyncio
+from i3ipc.aio import Connection
+from sys import argv
+async def main():
+    i3 =  await Connection().connect()
+    outputs = await i3.get_outputs()
+    workspaces = await i3.get_workspaces()
+    target_workspace = None
+    
+    for output in outputs:
+        if output.focused == True:
+            focused_output = output
+    for workspace in workspaces:
+        if str(workspace.num) == argv[1]:
+            target_workspace = workspace
+        if workspace.output == focused_output.name:
+            prev_workspace = workspace
+    
+    #Move target workspace to focused output
+    await i3.command('workspace ' + str(target_workspace.num) + '; move workspace to output ' + focused_output.name + '; workspace ' + str(target_workspace.num))
+    #move previous workspace to target workspace's output
+    await i3.command ('workspace ' + str(prev_workspace.num) + '; move workspace to output ' + target_workspace.output + '; workspace ' + str(prev_workspace.num))
+    #focus target workspace at the new output
+    await i3.command ('workspace ' + str(target_workspace.num))
+asyncio.run(main())
