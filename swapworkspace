@@ -18,7 +18,7 @@ async def main():
             prev_workspace = workspace
  
     # if the target workspace doesn't exist, create it
-    if type(target_workspace) == None:
+    if target_workspace == None:
         await i3.command('workspace ' + argv[1])
     else:
         # Move target workspace to focused output
